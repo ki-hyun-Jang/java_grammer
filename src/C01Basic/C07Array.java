@@ -1,7 +1,6 @@
 package C01Basic;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class C07Array {
     public static void main(String[] args) {
@@ -91,25 +90,80 @@ public class C07Array {
 
 //        문자정렬
 //        아스키코드(unicode)기준으로 정렬
-        String[] fruits = {"banana","apple","cherry"};
-        Arrays.sort(fruits);
-        System.out.println(Arrays.toString(fruits));
+//        String[] fruits = {"banana","apple","cherry"};
+//        Arrays.sort(fruits);
+//        System.out.println(Arrays.toString(fruits));
 //        내림차순: 기본형 타입은 Comparator로 처리불가
-        Arrays.sort(fruits, Comparator.reverseOrder());
-        int[] arr = {4,6,3,7,1};
+//        Arrays.sort(fruits, Comparator.reverseOrder());
+//        int[] arr = {4,6,3,7,1};
 //        Arrays.sort(arr,Comparator.reverseOrder());
 //        Arrays.sort(arr)하고 뒤집으면 내림차순임
-        String[] fruits2 = {"apple","applee","applef"};
-        System.out.println();
-        int[] array = {1, 5, 2, 6, 3, 7, 4};
-        int start = 1;
-        int end = 4;
-        int pick = 2;
-        int[] a = Arrays.copyOfRange(array,start,end);
-        Arrays.sort(a);
-        System.out.println(a[pick]);
 
+//        숫자 조합의 합
+//        모두 각기 다른 숫자의 배열이 있을 때, 만들어질 수 있는 2개의 조합의 합을 출력
+//        int[] intArr = {10,20,30,40,50,60};
+//        int[] result = new int[16];
+//        int index =0;
+//        for(int i = 0; i<intArr.length-1; i++){
+//            for(int j = i+1; j < intArr.length; j++){
+//                result[index] = intArr[i]+intArr[j];
+//                index += 1;
+//            }
+//        }
+//        System.out.println(Arrays.toString(result));
+//
+//        Arrays.sort(result);
+//        int count = 0;
+//        int[] answer = new int[16];
+//        for(int i = 1; i<result.length; i++){
+//            if(result[i]!=result[i-1]) answer[count]=result[i]; count++;
+//        }
+//        System.out.println(Arrays.toString(answer));
+//        System.out.println();
 
+//        배열의 복사
+//        copyOf(배열명, length), Arrays.copy.OfRange(배열명, start, end)
+//        int[] answer1 = Arrays.copyOf(answer,count);
+//        int[] answer2 = Arrays.copyOfRange(answer,0,count);
 
+//        이진탐색 - 이분탐색
+//        오름차순 정렬이 되어있어야 이진탐색 가능
+//        Arrays.binarySearch(answer,1);
+
+//        배열간 비교
+//        int[] arr1 = {10,20,30};
+//        int[] arr2 = {10,20,30};
+//        Array.equals: 값과 순서까지 동일해야 true
+//        System.out.println(Arrays.equals(arr1,arr2));
+
+//        2차원 배열의 선언과 할당
+        int[][] arr1 = new int[2][3];
+        arr1[0][0] = 10;
+        arr1[0][1] = 20;
+        arr1[0][2] = 30;
+
+//        가변배열 선언 후 할당.
+        int[][] arr2 = new int[2][];
+        arr2[0] = new int[2];
+        arr2[1] = new int[3];
+        arr2[0][0] = 10;
+        arr2[0][1] = 20;
+        arr2[1][0] = 30;
+        arr2[1][1] = 40;
+        System.out.println(Arrays.deepToString(arr2));
+//        가변배열 리터럴 방식
+        int[][] arr3 = {{10,20},{30,40,50}};
+
+//        [3][4] 사이즈 배열 선언하고 1~12까지 값을 각 배열에 순차적으로 할당
+        int[][] arr4 = new int[3][];
+        int value = 0;
+        for(int i = 0; i<arr4.length; i++){
+            arr4[i] = new int[4];
+            for(int j = 0; j<arr4[i].length; j++){
+                value += 1;
+                arr4[i][j] = value;
+            }
+        }
+        System.out.println(Arrays.deepToString(arr4));
     }
 }
