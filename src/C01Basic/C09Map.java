@@ -47,20 +47,5 @@ public class C09Map {
             sports.put(str, sports.getOrDefault(str,0)+1);
         }
 
-        String[] aaa = new String[];
-
-
-
-        List<String> a = new ArrayList<>(Arrays.asList());
-        System.out.println(sports);
-
-        Map<String, Integer> map = new HashMap<>();
-        for(String str: participant) map.put(str, map.getOrDefault(str,0)+1);
-        for(String str: completion) map.put(str, map.get(str)-1);
-
-        for( Map.Entry<String, Integer> KV :map.entrySet()) {
-            if (KV.getValue()==1) return KV.getKey();
-        }
-
     }
 }
