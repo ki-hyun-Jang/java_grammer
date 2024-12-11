@@ -1,8 +1,8 @@
 package C01Basic;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Stack;
 
 public class C11QueueStackDeque {
     public static void main(String[] args) {
@@ -50,29 +50,47 @@ public class C11QueueStackDeque {
 //        System.out.println(endTime4-startTime4);
 
 //        길이제한큐: ArrayBlockQueue
-        Queue<String> blockingQueue = new ArrayBlockingQueue<>(3);
+//        Queue<String> blockingQueue = new ArrayBlockingQueue<>(3);
 //        blockingQueue.add("ㅎ");
 //        blockingQueue.add("ㅎ");
 //        blockingQueue.add("ㅎ");
 //        blockingQueue.add("ㅎ");
-        blockingQueue.offer("ㅎ");
-        blockingQueue.offer("ㅎ");
-        blockingQueue.offer("ㅎ");
-        blockingQueue.offer("ㅎ");
-        System.out.println(blockingQueue);
+//        blockingQueue.offer("ㅎ");
+//        blockingQueue.offer("ㅎ");
+//        blockingQueue.offer("ㅎ");
+//        blockingQueue.offer("ㅎ");
+//        System.out.println(blockingQueue);
 
 //        우선순위 큐: 데이터를 꺼낼 때 정렬된 데이터가 pop
 //        전체 정렬이 아닌, poll할 때 마다 최소값을 보장
-        Queue<Integer> pq = new PriorityQueue<>();
-        pq.add(30);
-        pq.add(20);
-        pq.add(10);
-        pq.add(40);
-        pq.add(50);
-        System.out.println(pq.poll());
+//        Queue<Integer> pq = new PriorityQueue<>();
+//        pq.add(30);
+//        pq.add(20);
+//        pq.add(10);
+//        pq.add(40);
+//        pq.add(50);
+//
+//        System.out.println(pq.poll());
 
+//        stack
+        Stack<Integer> stack = new Stack<>();
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+        System.out.println(stack.pop());
+        System.out.println(stack.peek());
 
-
+//        Deque : addFirst, addLast, pollFirst, pollLast
+        Deque<Integer> d1 = new ArrayDeque<>();
+        d1.addLast(10);
+        d1.addLast(20);
+        System.out.println(d1);
+        d1.addFirst(30);
+        System.out.println(d1);
+        System.out.println(d1.peekFirst());
+        System.out.println(d1.peekLast());
+        System.out.println(d1.pollLast());
+        System.out.println(d1.pollFirst());
 
 
 
