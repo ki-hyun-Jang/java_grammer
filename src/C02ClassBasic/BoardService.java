@@ -4,17 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class BoardService {
     private boolean bool = true;
     static BufferedReader br = new BufferedReader( new InputStreamReader(System.in));
-    Map<String,Author> authorMap = new HashMap<>();
-    Map<Integer,Post> postMap = new HashMap<>();
-    Set<String> authorEmails = new HashSet<>();
 
     public static void main(String[] args) throws IOException {
         BoardService boardService = new BoardService();
@@ -51,8 +46,8 @@ public class BoardService {
         String password2= br.readLine();
         password = passwordCheck(password,password2);
         System.out.println("---------------------");
-        authorMap.put(email,new Author(name,email,password));
-        authorEmails.add(email);
+        Author a = new Author(name,email,password);
+        a.signUp();
         System.out.println("회원가입이 완료되었습니다.");
     }
 
@@ -60,11 +55,11 @@ public class BoardService {
     void authorFullSearch(){
         System.out.println("회원 전체조회를 선택하셨습니다.");
         System.out.println("현재 회원 내역입니다.");
-        if (authorMap.isEmpty()) System.out.println("회원이 없습니다.");
-        for(Author a : authorMap.values()) {
+        if (Author.authorIsEmpty()) System.out.println("회원이 없습니다.");
+        for( Map.Entry<Integer, String> a : Author.IdEmailFullGet().entrySet()) {
             System.out.println("---------------------");
-            System.out.println("ID: "+ a.getId());
-            System.out.println("E-Mail: " + a.getEmail());
+            System.out.println("ID: "+ a.getKey());
+            System.out.println("E-Mail: " + a.getValue());
         }
     }
 
@@ -73,21 +68,16 @@ public class BoardService {
         System.out.println("회원 상세조회를 선택하셨습니다.");
         System.out.println("조회하실 회원 ID를 입력해주세요.");
         int authorId = Integer.parseInt(checkNum(br.readLine()));
-        String email = "";
-        for(Author a: authorMap.values()){
-            if (authorId==a.getId()) email=a.getEmail();
-        }
-        if (!authorMap.containsKey(email)) System.out.println("해당 회원은 존재하지 않습니다.");
+
+        if (!Author.CheckDuplicateEmailToId(authorId)) System.out.println("해당 회원은 존재하지 않습니다.");
         else {
-            Author a = authorMap.get(email);
+            Author a = Author.detailAuthorToId(authorId);
             System.out.println("회원 ID: " + a.getId());
             System.out.println("회원 email: " + a.getEmail());
             System.out.println("회원 이름: " + a.getName());
             System.out.println("회원 비밀번호: " + a.getPassword());
             System.out.println("회원의 글 작성 수: " +a.getPostCount());
-
         }
-
     }
 
 //    4. 게시글 작성
@@ -99,19 +89,22 @@ public class BoardService {
         String title = checkNullString(br.readLine());
         System.out.println("내용을 입력해주세요.");
         String contents = checkNullString(br.readLine());
-        int id = authorMap.get(email).getId();
-        postMap.put(Post.staticId,new Post(id,title,contents));
-        authorMap.get(email).PlusPostCount();
+
+        int id = Author.detailAuthorToEmail(email).getId();
+        Post p = new Post(id,title,contents);
+        p.writePost();
+        Author.detailAuthorToEmail(email).plusPostCount();
         System.out.println("글 작성이 완료되었습니다.");
     }
 
 //    5.게시물 목록 조회 : id(post), title
     void postFullSearch(){
-        if (postMap.isEmpty()) System.out.println("작성된 글이 없습니다.");
-        for(Post p : postMap.values()){
+        if (Post.postIsEmpty()) System.out.println("작성된 글이 없습니다.");
+
+        for( Map.Entry<Integer, Post> p : Post.getPostMap().entrySet()) {
             System.out.println("---------------------");
-            System.out.println("작성자 ID: "+ p.getId());
-            System.out.println("글 제목: " + p.getTitle());
+            System.out.println("작성자 ID: "+ p.getValue().getAuthorId());
+            System.out.println("글 제목: " + p.getValue().getTitle());
         }
     }
 
@@ -120,13 +113,11 @@ public class BoardService {
         System.out.println("게시물 상세조회를 선택하셨습니다.");
         System.out.println("조회하실 게시물 ID를 입력해주세요.");
         int postId = Integer.parseInt(checkNum(br.readLine()));
-        if (!postMap.containsKey(postId)) System.out.println("해당 게시물은 없습니다.");
+
+        if (!Post.checkid(postId)) System.out.println("해당 게시물은 없습니다.");
         else {
-            Post p = postMap.get(postId);
-            String email = "";
-            for(Author a: authorMap.values()){
-                if (p.getAuthorId()==a.getId()) email=a.getEmail();
-            }
+            Post p = Post.detailPostToEmail(postId);
+            String email = Author.idToEmail(p.getAuthorId()); // author에서 조회
             System.out.println("글ID: " + p.getId());
             System.out.println("글 제목: " + p.getTitle());
             System.out.println("글 내용: " + p.getContents());
@@ -138,7 +129,7 @@ public class BoardService {
 //    이메일 정규식 및 중복검사
     String emailPattern(String email) throws IOException {
         String pattern = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
-        while(!Pattern.matches(pattern,email)|| authorEmails.contains(email)){
+        while(!Pattern.matches(pattern,email)|| Author.checkEmail(email)){
             System.out.println("올바른 이메일 형식이 아니거나 중복된 이메일입니다.");
             email = br.readLine();
         }
@@ -179,7 +170,7 @@ public class BoardService {
 
 //    해당 이메일이 있는지 확인
     String checkContainEmail(String email) throws IOException {
-        while (!authorEmails.contains(email)){
+        while (!Author.checkEmail(email)){
             System.out.println("없는 이메일입니다. 다시 입력해주세요.");
             email = br.readLine();
         }
@@ -199,12 +190,18 @@ public class BoardService {
 }
 
 class Author{
-    static int staticId;
+    private static Map<String,Author> authorMap = new HashMap<>();
+    private static Map<Integer,String>  authorEmails = new HashMap<>();
+    private static int staticId =0;
     private int id;
     private String name;
     private String email;
     private String password;
     private int postCount;
+
+    public static String idToEmail(int id){
+        return authorEmails.get(id);
+    }
 
     public Author(String name, String email, String password) {
         this.id = staticId;
@@ -214,8 +211,46 @@ class Author{
         staticId += 1;
     }
 
-    public int getPostCount() {
-        return postCount;
+    public static Boolean checkEmail(String email){
+        return authorMap.containsKey(email);
+    }
+
+    public static Author detailAuthorToId(int id){
+        String email = authorEmails.get(id);
+        return detailAuthorToEmail(email);
+    }
+
+    public static Author detailAuthorToEmail(String email){
+        return authorMap.get(email);
+    }
+
+    public static boolean CheckDuplicateEmailToId(int id){
+        return authorEmails.containsKey(id);
+    }
+
+    public static boolean authorIsEmpty(){
+        return authorMap.isEmpty();
+    }
+
+    public static Map<Integer, String> IdEmailFullGet() {
+        Map<Integer, String> result = new HashMap<>();
+        for(Author a : authorMap.values()){
+            result.put(a.id,a.email);
+        }
+        return result;
+    }
+
+    public void signUp(){
+        authorMap.put(email,this);
+        authorEmails.put(this.id,this.email);
+    }
+
+    public void plusPostCount(){
+        this.postCount += 1;
+    }
+
+    public static int getStaticId() {
+        return staticId;
     }
 
     public int getId() {
@@ -234,13 +269,15 @@ class Author{
         return password;
     }
 
-    public void PlusPostCount(){
-        this.postCount += 1;
+    public int getPostCount() {
+        return postCount;
     }
+
 }
 
 class Post{
-    static int staticId;
+    private static Map<Integer,Post> postMap = new HashMap<>();
+    private static int staticId;
     private int id;
     private int authorId;
     private String title;
@@ -252,6 +289,22 @@ class Post{
         this.title = title;
         this.contents = contents;
         staticId += 1;
+    }
+
+    public static Post detailPostToEmail(int id){
+        return postMap.get(id);
+    }
+
+    public static Boolean checkid(int id){
+        return postMap.containsKey(id);
+    }
+
+    public void writePost(){
+        postMap.put(this.id,this);
+    }
+
+    public static boolean postIsEmpty(){
+        return postMap.isEmpty();
     }
 
     public int getId() {
@@ -268,6 +321,10 @@ class Post{
 
     public String getContents() {
         return contents;
+    }
+
+    public static Map<Integer, Post> getPostMap() {
+        return postMap;
     }
 }
 
