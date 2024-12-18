@@ -10,7 +10,7 @@ public class C0501InnerClass {
 //(일반)내부클래스
 class MemberInnerClass {
     int a;
-    display(){
+    void display(){
         System.out.println("a의 값은 "+this.a);
     }
 //    static내부클래스: 밖의 MemberInnerClass의 Static변수처럼 활용
